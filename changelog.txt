@@ -1,0 +1,36 @@
+1.0
+Init
+
+1.1
+- Added Extra Score Multipliers:
+/ Drifting with another car nearby gives you double points (Intended for online tandems)
+/ Drifting while braking gives you half the points,
+/ Drifting backwards gives you quarter the points,
+- The drift score display will turn green or yellow depending on if you're getting more or less points from extra multipliers.
+- Drifting Backwards no longer cancels your combo, instead, you get less points for it.
+- Made scoring much more precise by rounding the displayed number instead of rounding the internal score.
+- Fixed lap score when drifting through the start line.
+
+1.2
+- Added new simple drift angle display
+- Adjusted scoring - micro angles and low speed will give you less points and combo now, big angles and speeds will give more points now.
+- Current Lap Score display no longer glitches out
+- Replaced the dashes on the scoreboard with different one that is centered, looks better. If I feel creative one day, I will give this board a proper graphical design instead of using text for the whole thing.
+- Praises can now level up by getting big enough score, instead of just combo multiplier.
+- Replaced two top "Nice Drift" praises which were out of place with something else. I need suggestions on this one as i'd like to include as many of these "praises" as possibly fitting.
+
+1.3
+- Made sure all score related calculations are independent on the framerate as much as possible. Depending on your framerate, you're gonna see penalties being applied quicker (if you were running below 60FPS) or slower (if above 60FPS). Additionally, some small changes to how quickly penalties are applying have been made as a side effect as it was hard to get the math right with the old method.
+- Made driving the track backwards penalty more strict. You shouldn't be able to circle in place anymore to gain points.
+- Angle display now goes all the way up to 180 degrees, instead of just 90, and displays reverse angles correctly.
+- Reworked Reverse Drifting. Instead of reducing the score by x0.25 whenever you pass 90 degree angle, you now get a x1.5 bonus for drifting between 90 and 120 degree angle, but x0 if you pass the 120 degrees mark. Score penalty is not applied to allow 360 drifts without losing combo.
+- Added new score bonus for long drifts. Past 3 seconds mark, the extra score multiplier will gain +0.1 for each second of drift, indefinitely, and resets whenever the drift ends, you hit a penalty or get past 120 degrees on reverse drift.
+- Smoothed out score gain at the first second of the drift, making very short drifts give a bit less points
+- Added new indicator near the combo multiplier that shows up whenever any extra bonus is active, showing the total extra multiplier
+- All score calculations are now stopped when the game is paused.
+
+1.4
+- Reworked how drift combo multiplier drops off when you're not drifting. It starts slow and gets faster the longer you're out of drift. This allows you to chain drifts together with far less loss of the multiplier, while still dropping a lot when you're not drifting for a while.
+- Done some changes to how penalties are calculated to use the same kind of effect - very short penalties are less harsh, long ones will wipe off your score faster.
+- Added new toggle for lap scoring. Intended for cases where you want to drift in freeroam but the AI line is not set up that way. When you disable this option, it acts as if the track had no AI line, so it's not counting the lap records, but also allows you to drift in any direction. Toggling this option also wipes off your currently accumulated combo, to prevent cheating.
+- Added App Icon.
