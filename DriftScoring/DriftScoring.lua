@@ -82,23 +82,23 @@ function script.update(dt)
         SecondsTimer = SecondsTimer + dt
         UpdatesTimer = UpdatesTimer + 1
         angle = math.max(0, ((math.max(math.abs(Car.wheels[2].slipAngle), math.abs(Car.wheels[3].slipAngle)))))
-        if (Car.localVelocity.z <= 0 and Car.speedKmh > 20) then
+        if (Car.localVelocity.z <= 0 and Car.speedKmh > 1) then
             angle = 180-angle
         end
         dirt = math.min(math.abs(Car.wheels[0].surfaceDirt), math.abs(Car.wheels[1].surfaceDirt), math.abs(Car.wheels[2].surfaceDirt), math.abs(Car.wheels[3].surfaceDirt))
         if angle > 10 and Car.speedKmh > 20 and dirt == 0 and Car.wheelsOutside < 4 and ((not TrackHasSpline) or Car.splinePosition >= SplineReached-0.0001) then
             CurrentDriftTimeout = math.min(1, CurrentDriftTimeout + dt)
-            CurrentDriftScore = CurrentDriftScore + (((((angle-10)*2+(Car.speedKmh-20)*2)*0.5)*dt*CurrentDriftCombo))*ExtraScoreMultiplier*InitialScoreMultiplier
-            CurrentDriftCombo = CurrentDriftCombo + (((((angle-10)+(Car.speedKmh-20))*0.5)*dt)/100)*ExtraScoreMultiplier*InitialScoreMultiplier
+            CurrentDriftScore = CurrentDriftScore + (((((angle-10)*10+(Car.speedKmh-20)*10)*0.5)*dt*CurrentDriftCombo))*ExtraScoreMultiplier*InitialScoreMultiplier*0.2
+            CurrentDriftCombo = math.min(5, CurrentDriftCombo + (((((angle-10)+(Car.speedKmh-20))*0.5)*dt)/100)*ExtraScoreMultiplier*InitialScoreMultiplier*0.5)
             LongDriftTimer = LongDriftTimer + dt
-            NoDriftTimer = 0
+            NoDriftTimer = 0.5
             InitialScoreMultiplier = math.min(1, LongDriftTimer)
             if ComboReached < CurrentDriftCombo then
                 ComboReached = CurrentDriftCombo
             end
         elseif CurrentDriftCombo > 1 then
             CurrentDriftTimeout = math.min(1, CurrentDriftTimeout + dt)
-            CurrentDriftCombo = math.max(1, CurrentDriftCombo - ((0.2*((NoDriftTimer/2)^2))*dt) - ((CurrentDriftCombo*0.05*(NoDriftTimer/2))*dt))
+            CurrentDriftCombo = math.max(1, CurrentDriftCombo - 0.1*(NoDriftTimer^2)*dt)
             NoDriftTimer = NoDriftTimer + dt
             LongDriftTimer = 0
         elseif CurrentDriftCombo == 1 and CurrentDriftTimeout > 0 then
@@ -211,12 +211,10 @@ function script.update(dt)
                 ExtraScoreMultiplier = ExtraScoreMultiplier * 0
                 ExtraScore = true
                 LongDriftTimer = 0
-                NoDriftTimer = NoDriftTimer + dt
             end
             if Car.brake > 0.05 or Car.handbrake > 0.05 then
                 ExtraScoreMultiplier = ExtraScoreMultiplier * 0.5
                 ExtraScore = true
-                NoDriftTimer = NoDriftTimer + dt
             end
             if NearestCarDistance < 7.5 then
                 ExtraScoreMultiplier = ExtraScoreMultiplier * 2
@@ -240,16 +238,14 @@ function script.update(dt)
         if NoWarning == false and CurrentDriftCombo > 1 then
             ComboReached = 0
             CurrentDriftScore = CurrentDriftScore - (CurrentDriftScore*dt)
-            NoDriftTimer = NoDriftTimer + dt*5
             if CurrentDriftScore > 0 then
-                CurrentDriftCombo = math.max(1, CurrentDriftCombo - (0.4*(NoDriftTimer/2))*dt)
+                CurrentDriftCombo = math.max(1, CurrentDriftCombo - dt)
             else
                 CurrentDriftCombo = 1
             end
         elseif NoWarning == false and CurrentDriftCombo == 1 then
             ComboReached = 0
-            CurrentDriftScore = CurrentDriftScore - (CurrentDriftScore*5*dt)
-            NoDriftTimer = NoDriftTimer + dt*5
+            CurrentDriftScore = CurrentDriftScore - (CurrentDriftScore*2*dt)
         end
 
         if SettingsShowScoreDisplay and SettingsShowScoreDisplay > 0 then
@@ -310,7 +306,11 @@ function script.windowDisplay()
         if math.ceil(CurrentDriftCombo*10)/10 % 1 ~= 0 then
             ui.dwriteText("x" .. math.ceil(CurrentDriftCombo*10)/10 .. ExtraMultiplierDisplay, 30*DisplayScale, color)
         else
-            ui.dwriteText("x" .. math.ceil(CurrentDriftCombo*10)/10 .. ".0" .. ExtraMultiplierDisplay, 30*DisplayScale, color)
+            if math.ceil(CurrentDriftCombo*10) == 50 and ExtraScoreMultiplier >= 1 then
+                ui.dwriteText("x" .. math.ceil(CurrentDriftCombo*10)/10 .. ".0" .. ExtraMultiplierDisplay, 30*DisplayScale, colorGreen)
+            else
+                ui.dwriteText("x" .. math.ceil(CurrentDriftCombo*10)/10 .. ".0" .. ExtraMultiplierDisplay, 30*DisplayScale, color)
+            end
         end
         ui.dwriteText(math.floor(CurrentDriftScore), 40*DisplayScale, color)
 
@@ -329,17 +329,17 @@ function script.windowDisplay()
     
     
         if NoWarning and ShowPraises then
-            if ComboReached >= 15 or CurrentDriftScore > 64000 then
+            if CurrentDriftScore > 64000 then
                 ui.dwriteText("Impossible Drift!", 20*DisplayScale, colorGreen)
-            elseif ComboReached >= 12.5 or CurrentDriftScore > 32000 then
+            elseif ComboReached >= 5 or CurrentDriftScore > 32000 then
                 ui.dwriteText("Incredible Drift!", 20*DisplayScale, colorGreen)
-            elseif ComboReached >= 10 or CurrentDriftScore > 16000 then
+            elseif ComboReached >= 4.5 or CurrentDriftScore > 16000 then
                 ui.dwriteText("Insane Drift!", 20*DisplayScale, colorGreen)
-            elseif ComboReached >= 8 or CurrentDriftScore > 8000 then
+            elseif ComboReached >= 4 or CurrentDriftScore > 8000 then
                 ui.dwriteText("Amazing Drift!", 20*DisplayScale, colorGreen)
-            elseif ComboReached >= 6 or CurrentDriftScore > 4000 then
+            elseif ComboReached >= 3.5 or CurrentDriftScore > 4000 then
                 ui.dwriteText("Great Drift!", 20*DisplayScale, colorGreen)
-            elseif ComboReached >= 4 or CurrentDriftScore > 2000 then
+            elseif ComboReached >= 3 or CurrentDriftScore > 2000 then
                 ui.dwriteText("Good Drift!", 20*DisplayScale, colorGreen)
             elseif ComboReached >= 2 or CurrentDriftScore > 1000 then
                 ui.dwriteText("Nice Drift!", 20*DisplayScale, colorGreen)
