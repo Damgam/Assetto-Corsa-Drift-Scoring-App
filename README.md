@@ -14,4 +14,4 @@ I'm not planning to add any extra scoring for tricks, as these are potentially v
 Tested on Custom Shaders Patch 0.2.4/0.2.5preview1
 Compatibility with older versions is not guaranteed.
 
-Preview Video: https://youtu.be/jBdEipAIC-k
+Preview Video: [Link](https://youtu.be/8ehkigxZpM8?si=2U9Tz1DdfNLgwqod)
